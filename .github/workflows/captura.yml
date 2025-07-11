@@ -3,7 +3,7 @@ name: Captura escrito CSJ
 on:
   schedule:
     - cron: '0 12 * * *'  # Ejecuta todos los días a las 12:00 UTC
-  workflow_dispatch:       # Permite ejecución manual
+  workflow_dispatch:
 
 jobs:
   run-selenium:
@@ -30,18 +30,10 @@ jobs:
 
       - name: Install ChromeDriver
         run: |
-          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
-          echo "Chrome version: $CHROME_VERSION"
-          VERSION_MAJOR_MINOR=$(echo $CHROME_VERSION | cut -d. -f1-2)
-          CHROMEDRIVER_VERSION=$(curl -sS https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json | \
-            jq -r --arg ver "$CHROME_VERSION" '.channels.chromium.versions[] | select(.version | startswith($ver)) | .downloads.chromedriver[0].version' | head -n1)
-          if [ -z "$CHROMEDRIVER_VERSION" ]; then
-            CHROMEDRIVER_VERSION=$(curl -sS https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json | \
-              jq -r --arg ver "$VERSION_MAJOR_MINOR" '.channels.chromium.versions[] | select(.version | startswith($ver)) | .downloads.chromedriver[0].version' | head -n1)
-          fi
-          echo "ChromeDriver version: $CHROMEDRIVER_VERSION"
-          wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/$CHROMEDRIVER_VERSION/linux64/chromedriver-linux64.zip
-          unzip chromedriver-linux64.zip
+          CHROMEDRIVER_VERSION="138.0.7204.92"
+          echo "Forzando ChromeDriver version: $CHROMEDRIVER_VERSION"
+          wget https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip
           sudo mv chromedriver /usr/local/bin/
           sudo chmod +x /usr/local/bin/chromedriver
 
