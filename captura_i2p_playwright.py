@@ -10,7 +10,7 @@ def main():
         page.goto(url)
 
         # Cambia el selector según corresponda
-        page.click("#btnMostrar")
+        page.click("#btnVerDocumento")
 
         # Esperar que el contenido aparezca
         page.wait_for_selector("#contenidoEscrito")
