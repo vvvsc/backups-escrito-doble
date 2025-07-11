@@ -2,7 +2,7 @@ name: Descargar PDF y crear Release pública
 
 on:
   schedule:
-    - cron: '0 12 * * *'  # Ejecuta todos los días a las 12:00 UTC
+    - cron: '0 12 * * *'
   workflow_dispatch:
 
 jobs:
@@ -24,10 +24,21 @@ jobs:
       - name: Ejecutar script para descargar PDF
         run: python descargar_pdf_csj.py
 
+      - name: Crear tag con fecha
+        id: tag
+        run: |
+          TAG="v$(date +'%Y%m%d%H%M%S')"
+          echo "Tag: $TAG"
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag $TAG
+          git push origin $TAG
+          echo "::set-output name=tag::$TAG"
+
       - name: Crear Release y subir PDF
-        id: create_release
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ steps.tag.outputs.tag }}
           files: escrito_csj_*.pdf
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
