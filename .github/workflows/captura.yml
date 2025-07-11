@@ -1,12 +1,12 @@
-name: Captura escrito CSJ con Playwright
+name: Descargar PDF CSJ
 
 on:
   schedule:
-    - cron: '0 12 * * *'
+    - cron: '0 12 * * *'  # Ejecuta todos los días a las 12:00 UTC
   workflow_dispatch:
 
 jobs:
-  run-playwright:
+  descargar_pdf:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,14 +19,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install playwright
-          playwright install
+          pip install requests beautifulsoup4
 
-      - name: Run Python script
-        run: python captura_i2p_playwright.py
+      - name: Ejecutar script para descargar PDF
+        run: python descargar_pdf_csj.py
 
-      - name: Upload artifact
+      - name: Subir artifact
         uses: actions/upload-artifact@v4
         with:
-          name: escrito-captura
-          path: escrito_csj_*.html
+          name: escrito-csj-pdf
+          path: escrito_csj_*.pdf
