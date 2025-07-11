@@ -1,28 +1,21 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
+from playwright.sync_api import sync_playwright
 import hashlib
 import datetime
 
 def main():
-    options = Options()
-    options.add_argument('--headless')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
-
-    driver = webdriver.Chrome(options=options)
-    try:
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
         url = "https://www.csj.gov.py/verificarDocumento/Default.aspx?c=ccga00f&o=0"
-        driver.get(url)
+        page.goto(url)
 
-        # Cambia el selector del botón según corresponda
-        boton = driver.find_element(By.ID, "btnMostrar")  # Ejemplo, cambia si es otro
-        boton.click()
+        # Cambia el selector según corresponda
+        page.click("#btnMostrar")
 
-        driver.implicitly_wait(5)
+        # Esperar que el contenido aparezca
+        page.wait_for_selector("#contenidoEscrito")
 
-        # Cambia el selector del contenido según corresponda
-        contenido = driver.find_element(By.ID, "contenidoEscrito").get_attribute('innerHTML')
+        contenido = page.inner_html("#contenidoEscrito")
 
         fecha = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         nombre_archivo = f"escrito_csj_{fecha}.html"
@@ -33,8 +26,7 @@ def main():
         print(f"Archivo guardado: {nombre_archivo}")
         print(f"Hash SHA256: {hash_sha256}")
 
-    finally:
-        driver.quit()
+        browser.close()
 
 if __name__ == "__main__":
     main()
