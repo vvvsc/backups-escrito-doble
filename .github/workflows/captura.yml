@@ -32,8 +32,13 @@ jobs:
         run: |
           CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
           echo "Chrome version: $CHROME_VERSION"
+          VERSION_MAJOR_MINOR=$(echo $CHROME_VERSION | cut -d. -f1-2)
           CHROMEDRIVER_VERSION=$(curl -sS https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json | \
             jq -r --arg ver "$CHROME_VERSION" '.channels.chromium.versions[] | select(.version | startswith($ver)) | .downloads.chromedriver[0].version' | head -n1)
+          if [ -z "$CHROMEDRIVER_VERSION" ]; then
+            CHROMEDRIVER_VERSION=$(curl -sS https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json | \
+              jq -r --arg ver "$VERSION_MAJOR_MINOR" '.channels.chromium.versions[] | select(.version | startswith($ver)) | .downloads.chromedriver[0].version' | head -n1)
+          fi
           echo "ChromeDriver version: $CHROMEDRIVER_VERSION"
           wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/$CHROMEDRIVER_VERSION/linux64/chromedriver-linux64.zip
           unzip chromedriver-linux64.zip
