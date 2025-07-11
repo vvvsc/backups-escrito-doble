@@ -13,9 +13,9 @@ def main():
         page.click("#btnVerDocumento")
 
         # Esperar que el contenido aparezca
-        page.wait_for_selector("#mainContainer")
+        page.wait_for_selector("#viewerContainer")
 
-        contenido = page.inner_html("#mainContainer")
+        contenido = page.inner_html("#viewerContainer")
 
         fecha = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         nombre_archivo = f"escrito_csj_{fecha}.html"
