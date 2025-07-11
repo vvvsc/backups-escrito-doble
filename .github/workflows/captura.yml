@@ -1,4 +1,4 @@
-name: Descargar PDF y crear Release pública
+name: Descargar PDF y crear Release pública.
 
 on:
   schedule:
