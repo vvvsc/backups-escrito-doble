@@ -1,4 +1,4 @@
-name: Descargar PDF CSJ
+name: Descargar PDF y crear Release pública
 
 on:
   schedule:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  descargar_pdf:
+  descargar_y_release:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,8 +24,10 @@ jobs:
       - name: Ejecutar script para descargar PDF
         run: python descargar_pdf_csj.py
 
-      - name: Subir artifact
-        uses: actions/upload-artifact@v4
+      - name: Crear Release y subir PDF
+        id: create_release
+        uses: softprops/action-gh-release@v1
         with:
-          name: escrito-csj-pdf
-          path: escrito_csj_*.pdf
+          files: escrito_csj_*.pdf
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
